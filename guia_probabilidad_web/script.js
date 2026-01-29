@@ -1,75 +1,171 @@
-function nav(id){
-    document.getElementById('menu').style.display = id==='menu'?'grid':'none';
-    document.querySelectorAll('.card').forEach(c=>c.style.display='none');
-    if(id!=='menu') document.getElementById(id).style.display='block';
+function ocultarTodo() {
+    document.querySelectorAll('.pagina').forEach(p => p.style.display = 'none');
+    document.getElementById('menu').style.display = 'none';
 }
 
-/* TEMA 1 */
-let cara=0,cruz=0;
-function simularMoneda(){
-    let r=Math.random()<0.5?'Cara':'Cruz';
-    r==='Cara'?cara++:cruz++;
-    let p=(cara/(cara+cruz))*100;
-    grafT1.style.display='block';
-    barT1.style.width=p+'%';
-    resT1.innerHTML=
-        `Resultado: ${r}
-Espacio muestral: {CC, CX, XC, XX}
-Frecuencia relativa: ${p.toFixed(2)}%`;
+function mostrar(id) {
+    ocultarTodo();
+    let pagina = document.getElementById(id);
+    pagina.style.display = 'block';
 }
 
-/* TEMA 2 */
-function identificarVariable(){
-    let v=vInput.value.toLowerCase();
-    let c=v.includes("peso")||v.includes("estatura");
-    grafT2.style.display='block';
-    barT2.style.width=c?'100%':'40%';
-    resT2.innerHTML=
-        `Variable ${c?'continua':'discreta'}
-Paso: se analiza si puede tomar infinitos valores`;
+function volver() {
+    ocultarTodo();
+    document.getElementById('menu').style.display = 'block';
 }
 
-/* TEMA 3 */
-function calcProb(){
-    let f=+f1.value,n=+n1.value,p=f/n*100;
-    grafT3.style.display='block';
-    barT3.style.width=p+'%';
-    resT3.innerHTML=
-        `P = ${f}/${n}
-Probabilidad = ${p.toFixed(2)}%`;
+// PROBABILIDAD SIMPLE
+function probabilidad() {
+    let f = Number(document.getElementById('fav').value);
+    let p = Number(document.getElementById('pos').value);
+    document.getElementById('resProb').innerText =
+        "Probabilidad = " + (f / p);
 }
 
-/* TEMA 4 */
-function calcStats(){
-    let d=dataInput.value.split(/\s+/).map(Number).sort((a,b)=>a-b);
-    let media=d.reduce((a,b)=>a+b)/d.length;
-    grafT4.style.display='block';
-    barT4.style.width=(media/Math.max(...d))*100+'%';
-    resT4.innerHTML=
-        `Datos ordenados: ${d}
-Media=${media.toFixed(2)}
-Mediana=${d[Math.floor(d.length/2)]}`;
+// ESTADÍSTICA
+function estadistica() {
+    let datos = document.getElementById('datos').value.split(' ').map(Number);
+    let media = datos.reduce((a,b)=>a+b,0)/datos.length;
+    let mediana = datos.sort((a,b)=>a-b)[Math.floor(datos.length/2)];
+    document.getElementById('resEst').innerText =
+        "Media: " + media + " | Mediana: " + mediana;
 }
 
-/* TEMA 5 */
-function fact(n){return n<=1?1:n*fact(n-1);}
-function calcComb(){
-    let n=+cn.value,r=+cr.value;
-    let p=fact(n)/fact(n-r);
-    let c=p/fact(r);
-    grafT5.style.display='block';
-    barT5.style.width=(c/p*100)+'%';
-    resT5.innerHTML=
-        `Permutaciones=${p}
-Combinaciones=${c}`;
+// COMBINATORIA
+function factorial(n) {
+    return n <= 1 ? 1 : n * factorial(n - 1);
 }
 
-/* TEMA 6 */
-function interpretarG(){
-    const t={
-        b:"Barras: comparación entre categorías.",
-        p:"Pastel: proporciones del total.",
-        h:"Histograma: frecuencias por intervalos."
-    };
-    resT6.innerHTML=t[tipoG.value]||"Selecciona una opción";
+function combinatoria() {
+    let n = Number(document.getElementById('n').value);
+    let r = Number(document.getElementById('r').value);
+    let perm = factorial(n) / factorial(n - r);
+    let comb = factorial(n) / (factorial(r) * factorial(n - r));
+    document.getElementById('resComb').innerText =
+        "Permutaciones: " + perm + " | Combinaciones: " + comb;
 }
+
+function ejercicio1() {
+    document.getElementById("resEj1").innerText =
+        "Respuesta: Es una variable aleatoria DISCRETA, porque solo puede tomar valores enteros como 1, 2, 3, 4, 5 o 6.";
+}
+
+function ejercicio2() {
+    document.getElementById("resEj2").innerText =
+        "Respuesta: Es una variable aleatoria CONTINUA, porque el tiempo puede tomar infinitos valores dentro de un intervalo.";
+}
+
+
+
+// ===== VALIDACIONES EJERCICIOS =====
+
+function validarEj1() {
+    let r = document.getElementById("resp1").value;
+    let res = document.getElementById("resEj1");
+
+    if (r === "discreta") {
+        res.innerText = "✅ Correcto. Es una variable aleatoria discreta.";
+        res.style.color = "green";
+    } else {
+        res.innerText = "❌ Incorrecto. La respuesta correcta es DISCRETA.";
+        res.style.color = "red";
+    }
+}
+
+function validarEj2() {
+    let r = document.getElementById("resp2").value;
+    let res = document.getElementById("resEj2");
+
+    if (r === "continua") {
+        res.innerText = "✅ Correcto. Es una variable aleatoria continua.";
+        res.style.color = "green";
+    } else {
+        res.innerText = "❌ Incorrecto. La respuesta correcta es CONTINUA.";
+        res.style.color = "red";
+    }
+}
+
+let grafica = null;
+
+function generarGrafica() {
+    const ctx = document.getElementById('graficaDado').getContext('2d');
+
+    if (grafica) {
+        grafica.destroy();
+    }
+
+    grafica = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6'],
+            datasets: [{
+                label: 'Probabilidad',
+                data: [1/6, 1/6, 1/6, 1/6, 1/6, 1/6],
+                backgroundColor: '#2a9d8f'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 0.2
+                }
+            }
+        }
+    });
+}
+
+
+
+let graficaEditable = null;
+
+function generarGraficaEditable() {
+
+    let valores = [
+        Number(p1.value),
+        Number(p2.value),
+        Number(p3.value),
+        Number(p4.value),
+        Number(p5.value),
+        Number(p6.value)
+    ];
+
+    let suma = valores.reduce((a, b) => a + b, 0);
+    let mensaje = document.getElementById("msgGrafica");
+
+    if (Math.abs(suma - 1) > 0.01) {
+        mensaje.innerText = "❌ La suma de las probabilidades debe ser 1.";
+        mensaje.style.color = "red";
+        return;
+    }
+
+    mensaje.innerText = "✅ Distribución válida. Gráfica generada.";
+    mensaje.style.color = "green";
+
+    const ctx = document.getElementById('graficaDado').getContext('2d');
+
+    if (graficaEditable) {
+        graficaEditable.destroy();
+    }
+
+    graficaEditable = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6'],
+            datasets: [{
+                label: 'Probabilidad',
+                data: valores,
+                backgroundColor: '#e76f51'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 1
+                }
+            }
+        }
+    });
+}
+
