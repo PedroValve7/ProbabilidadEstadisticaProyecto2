@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab de Probabilidad y Estadística</title>
+    <style>
+        /* CSS AJUSTADO - ESTILO DASHBOARD CON CONTENEDOR DE LOGO */
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #f27121;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --success: #27ae60;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); margin: 0; color: #333; overflow-x: hidden;
+        }
+
+        header { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; padding: 30px 20px; text-align: center;
+            border-bottom: 6px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Contenedor blanco solicitado para el logo azul */
+        .logo-container {
+            background: white;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo { max-height: 80px; display: block; }
+
+        .container { max-width: 850px; margin: -20px auto 50px; padding: 0 20px; }
+
+        .menu-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 15px; margin-top: 20px; 
+        }
+
+        .btn-topic { 
+            background: var(--white); border: none; padding: 25px; border-radius: 15px;
+            cursor: pointer; font-weight: bold; color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+
+        .btn-topic:hover { 
+            transform: translateY(-5px); background: var(--primary); color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .card { 
+            background: var(--white); border-radius: 20px; padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .theory-box { 
+            background: #f8f9fa; border-left: 5px solid var(--primary);
+            padding: 15px; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5;
+        }
+
+        /* DISEÑO DE GRÁFICO DE BARRA (DINÁMICO) */
+        .chart-container {
+            background: #eee;
+            border-radius: 10px;
+            height: 20px;
+            width: 100%;
+            margin: 15px 0;
+            overflow: hidden;
+            display: none; /* Se muestra al calcular */
+        }
+
+        .chart-bar {
+            background: var(--accent);
+            height: 100%;
+            width: 0%;
+            transition: width 0.6s ease;
+        }
+
+        input, select { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 8px rgba(242,113,33,0.2); }
+
+        .btn-calc { 
+            background: var(--accent); color: white; border: none; padding: 16px;
+            width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer;
+            font-size: 1rem; margin: 15px 0; transition: 0.3s;
+        }
+
+        .btn-calc:hover { background: #d35400; letter-spacing: 1px; }
+
+        .step-box { 
+            background: #fffbe6; border-left: 6px solid #f1c40f;
+            padding: 20px; border-radius: 8px; margin-top: 20px;
+            color: #444; font-family: 'Courier New', monospace;
+        }
+
+        .btn-back { 
+            background: #ecf0f1; color: #34495e; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="img/logo.png" alt="Logo" class="logo" onerror="this.parentElement.style.display='none'">
+    </div>
+    <h1>Guía de Divulgación Estadística</h1>
+    <p>Comunicación clara para conceptos complejos</p>
+</header>
+
+<div class="container">
+    
+    <div id="menu" class="menu-grid">
+        <button class="btn-topic" onclick="nav('t1')">🎲 <span>Exp. Aleatorio</span></button>
+        <button class="btn-topic" onclick="nav('t2')">📈 <span>Variable Aleatoria</span></button>
+        <button class="btn-topic" onclick="nav('t3')">🎯 <span>Probabilidad</span></button>
+        <button class="btn-topic" onclick="nav('t4')">📉 <span>Media/Mediana/Moda</span></button>
+        <button class="btn-topic" onclick="nav('t5')">🧬 <span>Combinatoria</span></button>
+        <button class="btn-topic" onclick="nav('t6')">🖼️ <span>Gráficos</span></button>
+    </div>
+
+    <div id="t1" class="card">
+        <h2>Experimento Aleatorio</h2>
+        <div class="theory-box">Un experimento es aleatorio si el resultado es impredecible.</div>
+        <p>Ejemplo: Lanzar dos monedas al aire.</p>
+        <button class="btn-calc" onclick="simularMoneda()">Simular Experimento</button>
+        <div id="resT1" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+    <div id="t2" class="card">
+        <h2>Variable Aleatoria</h2>
+        <div class="theory-box">Clasifica tus datos según su naturaleza.</div>
+        <p>¿Qué tipo de dato quieres identificar?</p>
+        <input type="text" id="vInput" value="Estatura de alumnos">
+        <button class="btn-calc" onclick="identificarVariable()">Analizar Tipo</button>
+        <div id="resT2" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+    <div id="t3" class="card">
+        <h2>Probabilidad</h2>
+        
+        <div class="theory-box">Calcula la probabilidad de que ocurra un evento.</div>
+        <input type="number" id="f1" value="1">
+        <input type="number" id="n1" value="6">
+        <button class="btn-calc" onclick="calcProb()">Calcular Acción</button>
+        <div id="grafP" class="chart-container"><div id="barP" class="chart-bar"></div></div>
+        <div id="resT3" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+    <div id="t4" class="card">
+        <h2>Media, Mediana y Moda</h2>
+        
+
+[Image of a normal distribution curve showing mean and median]
+
+        <div class="theory-box">Resumen de datos estadísticos.</div>
+        <input type="text" id="dataInput" value="10 15 20 15 30">
+        <button class="btn-calc" onclick="calcStats()">Analizar Serie</button>
+        <div id="resT4" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+    <div id="t5" class="card">
+        <h2>Combinaciones y Permutaciones</h2>
+        
+        <div class="theory-box">Cálculo de agrupaciones.</div>
+        <input type="number" id="cn" value="5">
+        <input type="number" id="cr" value="2">
+        <button class="btn-calc" onclick="calcComb()">Ver Resultados</button>
+        <div id="resT5" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+    <div id="t6" class="card">
+        <h2>Interpretación de Gráficos</h2>
+        
+        <div class="theory-box">Uso académico de visualizaciones.</div>
+        <select id="tipoG" onchange="interpretarG()">
+            <option value="">Selecciona un tipo...</option>
+            <option value="b">Barras</option>
+            <option value="p">Pastel</option>
+            <option value="h">Histograma</option>
+        </select>
+        <div id="resT6" class="step-box"></div>
+        <button class="btn-back" onclick="nav('menu')">⬅ Volver</button>
+    </div>
+
+</div>
+
+<script>
+    function nav(id) {
+        document.getElementById('menu').style.display = 'none';
+        document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+        document.getElementById(id).style.display = (id === 'menu') ? 'grid' : 'block';
+    }
+
+    function simularMoneda() {
+        const res = ["Cara", "Cruz"];
+        let m1 = res[Math.floor(Math.random()*2)];
+        let m2 = res[Math.floor(Math.random()*2)];
+        document.getElementById('resT1').innerHTML = `<b>Resultado:</b> [${m1}] y [${m2}].`;
+    }
+
+    function identificarVariable() {
+        let v = document.getElementById('vInput').value.toLowerCase();
+        let esC = (v.includes("peso") || v.includes("estatura") || v.includes("tiempo"));
+        document.getElementById('resT2').innerHTML = `La variable "${v}" es <b>${esC ? 'Continua' : 'Discreta'}</b>.`;
+    }
+
+    function calcProb() {
+        let f = Number(document.getElementById('f1').value);
+        let n = Number(document.getElementById('n1').value);
+        let p = (f / n) * 100;
+        
+        // Mostrar gráfico
+        document.getElementById('grafP').style.display = 'block';
+        document.getElementById('barP').style.width = p + '%';
+        
+        document.getElementById('resT3').innerHTML = `<b>Probabilidad:</b> ${p.toFixed(2)}%<br>Dividimos ${f} entre ${n}.`;
+    }
+
+    function calcStats() {
+        let val = document.getElementById('dataInput').value.split(/\s+/).map(Number).filter(x => !isNaN(x)).sort((a,b)=>a-b);
+        let suma = val.reduce((a,b)=>a+b,0);
+        let media = (suma / val.length).toFixed(2);
+        let mediana = val[Math.floor(val.length/2)];
+        document.getElementById('resT4').innerHTML = `<b>Ordenados:</b> [${val}]<br><b>Media:</b> ${media}<br><b>Mediana:</b> ${mediana}`;
+    }
+
+    function fact(n) { return n <= 1 ? 1 : n * fact(n-1); }
+
+    function calcComb() {
+        let n = Number(document.getElementById('cn').value);
+        let r = Number(document.getElementById('cr').value);
+        let p = fact(n) / fact(n-r);
+        let c = p / fact(r);
+        document.getElementById('resT5').innerHTML = `<b>Permutaciones:</b> ${p}<br><b>Combinaciones:</b> ${c}`;
+    }
+
+    function interpretarG() {
+        let v = document.getElementById('tipoG').value;
+        let info = {
+            b: "<b>Barras:</b> Categorías separadas.",
+            p: "<b>Pastel:</b> Porcentajes del total.",
+            h: "<b>Histograma:</b> Datos agrupados en rangos."
+        };
+        document.getElementById('resT6').innerHTML = info[v] || "Selecciona una opción.";
+    }
+</script>
+</body>
+</html>
